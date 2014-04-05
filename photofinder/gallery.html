@@ -1,0 +1,260 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+    <head>
+        <title> sjisbmoc </title>
+        <script language='javascript' type='text/javascript'>
+            //<![CDATA[
+            
+            var util;               // 페이징 함수객체를 담을 변수
+            var page= 1;            // 현제 페이지
+            var page_rows   = 4;    // 화면에 뿌려질 목록수
+            var dis_pagecnt = 4;    // 페이 링크의 출력수
+            
+            var cls = new Array();
+            cls.push('first');
+            cls.push('second');
+            cls.push('third');
+            
+            function Request(valuename) // 파라미터 함수
+            {
+                var rtnval = "";
+                var nowAddress = unescape(location.href);
+                var parameters = (nowAddress.slice(nowAddress.indexOf("?")+1,nowAddress.length)).split("&");
+                
+                for(var i = 0 ; i < parameters.length ; i++)
+                {
+                    var varName = parameters[i].split("=")[0];
+                    if(varName.toUpperCase() == valuename.toUpperCase())
+                    {
+                        rtnval = parameters[i].split("=")[1];
+                        break;
+                    }
+                }
+                return rtnval;
+            }
+            
+            window.onload = function() // 초기화 함수
+            {
+                var strPage = Request("page");
+                page = strPage=='' ? 1 : parseInt(strPage);
+                getCont( 'image_data.html' );
+            }
+            
+            function getCont( url ) // 데이터 처리 함수
+            {
+                var obj     = document.getElementById('cont');
+                var xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+                
+                xmlhttp.open('GET', url, false);
+                xmlhttp.setRequestHeader('Content-Type','application/x-www-form-urlencoded;charset=UTF-8');
+                xmlhttp.onreadystatechange = function ()
+                {
+                    if( xmlhttp.readyState == '4' )
+                    {
+                        var listData    = xmlhttp.responseText.split('\r\n');
+                        
+                        util = new PageUtil();
+                        util.totalCnt   = listData.length;
+                        util.pageRows   = page_rows;
+                        util.curPage    = page;
+                        util.disPagepCnt= dis_pagecnt;
+                        util.setTotalPage();
+                        
+                        var st = 1;
+                        var ed = util.totalCnt;
+                        
+                        if( util.curPage == 1 )
+                        {
+                            st  = 1;
+                            ed  = st + (util.pageRows - 1);
+                        }
+                        else
+                        {
+                            st  = (util.curPage-1) * util.pageRows + 1;
+                            ed  = st + (util.pageRows - 1);
+                            if( ed > util.totalCnt )
+                            ed = util.totalCnt;
+                        }
+                        
+                        var contLt  = new Array();
+                        
+                        var cur = 0;
+                        for( st; st<=ed; st++ ){
+                            cur++;
+                            var imgsrc  = listData[(st-1)].split('|');
+                            
+                            if( cur == 1 ){
+                                var bimg        = document.getElementById('cont');
+                                bimg.innerHTML  = '<img src=\'http://'+imgsrc[1]+'\' border=\'0\'>';
+                            }
+                            
+                            var idimg       = document.getElementById('img'+cur);
+                            idimg.innerHTML = '<span><div><img src=\'http://'+imgsrc[0]+'\' border=\'0\' onclick=\'fncSelImg("http://'+imgsrc[1]+'")\' style=\'cursor:hand;\'></div><div>'+imgsrc[2]+'</div></span>';
+                        }
+                        
+                        util.Drow();
+                    }
+                }
+                
+                xmlhttp.send();
+            }
+            
+            function fncSelImg( url )
+            {
+                var bimg   = document.getElementById('cont');
+                bimg.innerHTML  = '<img src=\''+url+'\' border=\'0\'>';
+            }
+            
+            function prev() // 이전 페이지
+            {
+                location.href   = './image_list.html?page='+util.getPrev();
+            }
+            
+            function next() // 이후 페이지
+            {
+                location.href   = './image_list.html?page='+util.getNext();
+            }
+            
+            function prev_page() // 화면출력 이전
+            {
+                location.href   = './image_list.html?page='+util.getPrevPage();
+            }
+            
+            function next_page() // 화면출력 이후
+            {
+                location.href   = './image_list.html?page='+util.getNextPage();
+            }
+            
+            function goPage(param) // 페이지 이동
+            {
+                location.href   = './image_list.html?page='+param;
+            }
+            
+            var PageUtil = function() // 페이지 처리 함수
+            {
+                var totalCnt;    // 총 건수
+                var pageRows;    // 한 페이지에 출력될 항목 갯수
+                var curPage;     // 현재 페이지
+                var disPagepCnt; // 화면출력 페이지수
+                var totalPage;
+                
+                this.setTotalPage = function(){
+                    this.totalPage = parseInt((this.totalCnt/this.pageRows)) + (this.totalCnt%this.pageRows>0 ? 1:0);
+                }
+                
+                this.getPrev = function(){
+                    var prev    = 0;
+                    
+                    if(this.curPage > 1)
+                        prev    = this.curPage - 1;
+                    else
+                        prev    = 1;
+                    
+                    return prev;
+                }
+                
+                this.getNext = function(){
+                    var next    = 0;
+                    
+                    if(this.curPage < this.totalPage)
+                        next = this.curPage + 1;
+                    else
+                        next = this.totalPage;
+                    
+                    return next;
+                }
+                
+                this.getPrevPage = function(){
+                    var prevPage    = 0;
+                    var curPos      = (parseInt((this.curPage/this.disPagepCnt))+(this.curPage%this.disPagepCnt>0 ? 1:0));
+                    
+                    if(curPos>1)
+                    {
+                        prevPage    = parseInt((curPos-1))*this.disPagepCnt;
+                    }
+                    
+                    return prevPage;
+                }
+                
+                this.getNextPage = function(){
+                    var nextPage    = 0;
+                    var curPos  = parseInt((parseInt((this.curPage/this.disPagepCnt))+(this.curPage%this.disPagepCnt >0 ? 1:0)));
+                    
+                    if((curPos*this.disPagepCnt+1) <= this.totalPage)
+                    {
+                        nextPage    = curPos*this.disPagepCnt+1;
+                    }
+                    
+                    if( this.totalPage >= nextPage )
+                    return nextPage;
+                    else
+                    return this.totalPage;
+                }
+                
+                this.Drow = function(){
+                    var sb = '';
+                    
+                    var start   = ((parseInt((this.curPage/this.disPagepCnt))+(this.curPage%this.disPagepCnt>0 ? 1:0)) * this.disPagepCnt - (this.disPagepCnt-1));
+                    var end     = ((parseInt((this.curPage/this.disPagepCnt))+(this.curPage%this.disPagepCnt>0 ? 1:0)) * this.disPagepCnt);
+                    if(end > this.totalPage)
+                    end = this.totalPage;
+                    
+                    if(this.getPrev() < this.curPage){
+                        document.getElementById('left').innerHTML = "&nbsp;&nbsp;<a href='#' onclick='prev(); return false;'>◀</a>&nbsp;&nbsp;";
+                    }
+                    
+                    if(this.curPage < this.getNext()){
+                        document.getElementById('right').innerHTML = "&nbsp;&nbsp;<a href='#' onclick='next(); return false;'>▶</a>&nbsp;&nbsp;";
+                    }
+                }
+            }
+            </script>
+        
+        <style>
+            .ti         { font-size:12; background-color:#9CBBD7; color:#FFFFFF; padding-left:5px; padding-right:5px; padding-top:3px; padding-bottom:3px; font-weight:bold; text-align:center; }
+            .pg         { font-size:12; padding-left:5px; padding-right:5px; padding-top:3px; padding-bottom:3px; }
+            .first      { font-size:12; padding-left:5px; padding-right:5px; padding-top:3px; padding-bottom:3px; background-color:#FFFFFF; width:50; text-align:right; }
+            .second     { font-size:12; padding-left:5px; padding-right:5px; padding-top:3px; padding-bottom:3px; background-color:#FFFFFF; width:250; text-align:left; }
+            .third      { font-size:12; padding-left:5px; padding-right:5px; padding-top:3px; padding-bottom:3px; background-color:#FFFFFF; width:100; text-align:center; }
+            
+            a:link      { font-size: ;color:#000000;text-decoration:none; }
+            a:hover     { font-size: ;color:#000000;text-decoration:none; }
+            a:active    { font-size: ;color:#000000;text-decoration: none; }
+            a:visited   { font-size: ;color:#000000;text-decoration: none; }
+            </style>
+    </head>
+    <body style='margin-top:0; margin-left:0;'>
+        
+        
+        <table cellpadding='0' cellspacing='1' border='0' align='center' width='480'>
+            <tr>
+                <td id='cont' bgcolor='#5BAEDA' height='300' width='480' align='center' valign='center'>&nbsp;</td>
+            </tr>
+            <tr>
+                <td width='480'>
+                    <span id='left' style='width:30; float:left; border:0px; margin-top:20px;'>&nbsp;&nbsp;</span>
+                    <span style='float:left;'>
+                        <table cellpadding='0' cellspacing='0' border='0'>
+                            <tr height='60'>
+                                <td align='center' valign='center' id='img1' width='100'>&nbsp;</td>
+                                <td align='center' valign='center' id='img2' width='100'>&nbsp;</td>
+                                <td align='center' valign='center' id='img3' width='100'>&nbsp;</td>
+                                <td align='center' valign='center' id='img4' width='100'>&nbsp;</td>
+                            </tr>
+                        </table>
+                    </span>
+                    <span id='right' style='width:30; float:left; border:0px; margin-top:20px;'>&nbsp;&nbsp;</span>
+                </td>
+            </tr>
+        </table>
+        
+        <br>
+        
+        <table cellpadding='0' cellspacing='1' border='0' align='center'>
+            <tr>
+                <td id='page' class='pg'></td>
+            </tr>
+        </table>
+        
+    </body>
+</html>

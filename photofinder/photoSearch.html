@@ -1,0 +1,131 @@
+<html>
+<head>
+    <link rel="stylesheet" href="examples.css" />
+    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Armata">
+        
+    <title>search</title>
+    <script type="text/css">
+    	.reload {
+    		target: new;
+    	}
+    </script>
+    <script type="text/javascript">
+        
+        function Change()
+        {
+            var sel = document.getElementById("selectBox");
+            
+            if( sel.value == "1" ) {
+                sel.style.background="#92CCC0";
+                sel.style.color ="#FFFFFF";
+            }
+            else if( sel.value == "2" ) {
+                sel.style.background="#92CCC0";
+                sel.style.color ="white";
+            }
+            else if( sel.value == "3" ) {
+                sel.style.background="#92CCC0";
+                sel.style.color ="#FFFFFF";
+            }
+            else if( sel.value == "4" ) {
+                sel.style.background="#92CCC0";
+                sel.style.color ="#FFFFFF";
+            }
+            else if(sel.value == "5"){
+                sel.style.background="#92CCC0";
+                sel.style.color = "#FFFFFF"
+            }
+            else {
+                sel.style.background="#92CCC0";
+                sel.style.color = "#FFFFFF"
+            }
+        }
+        
+        function reload() {
+        	<a href="photoReload.html", target=main>
+        }
+        
+        $("#navigation").change(function()
+{
+    document.location.href = $(this).val();
+});
+    </script>
+    
+</head>
+
+<body bgcolor=#92CCC0>
+
+    <!-- form method="post" align="center" valign="center">
+        <select name="location" onchange="Change()" id="selectBox" -->
+    <div class="styled-select" align="center" font="Armata">
+        <select>
+            <option value="0" fonts="Armata">LOCATION &nbsp; </option>
+            <option value="1">Chicago</option>
+            <option value="3">Baltimore</option>
+            <option value="1">Boulder</option>
+            <option value="2">Denver</option>
+            <option value="2">Los Angeles</option>
+            <option value="3">Las Vegas</option>
+            <option value="1">San Francisco</option>
+            <option value="2">San hoser</option>
+            <option value="3">Seattle</option>
+            <option value="2">Minneapolis</option>
+            <option value="3">New York</option>
+            <option value="1">Washington</option>
+
+        </select>
+        &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 
+        <!--select id="navigation" onClick="window.location.href='photoReload.html'" -->
+        <select id="navigation">
+            <option value="photoReload.html">PRICE RANGE</option>
+            <option value="photoReload.html">$0 ~ $500</option>
+            <option value="3" >$500 ~ $1,000</option>
+            <option value="3">$1,000 ~ $1,500</option>
+            <option value="4">$1,500 ~ $2,000</option>
+            <option value="5">$2,000 ~ $3,000</option>
+            <option value="6">$3,000 +</option>
+        </select>
+    </div>
+    
+    <div id="select">
+        <div id="content">
+            <div id="head">
+                <h1>Mailbox</h1>
+                
+            </div>
+            <div id="list">
+                <div>
+                    <span class="entypo-box"></span>
+                    <a href="">Inbox</a>
+                    <label for="">112</label>
+                </div>
+                <div>
+                    <span class="entypo-star"></span>
+                    <a href="">Starred</a>
+                    <label for="">4</label>
+                </div>
+                <div>
+                    <span class="entypo-paper-plane"></span>
+                    <a href="">Sent</a>
+                    <label for="">6</label>
+                </div>
+                <div>
+                    <span class="entypo-flag"></span>
+                    <a href="">Flagged</a>
+                    <label for="">7</label>
+                </div>
+                <div> 
+                    <span class="entypo-trash"></span>
+                    <a href="">Deleted</a>  
+                    <label for="">5</label>
+                </div> 
+                <div>
+                    <a href="">More</a>
+                    <span class="entypo-down-dir"></span>
+                </div>
+            </div> 
+        </div> 
+    </div>
+    <!--/form -->
+</body>
+</html>
